@@ -1,12 +1,13 @@
 [build]
-  command = "cd frontend && npm install && npm run build" # Build frontend: cd into frontend, install, then build
-  publish = "frontend/dist/"              # Path to the built frontend assets, from the repo root.
+  command = "cd frontend && npm install && npm run build"
+  publish = "frontend/dist/"
 
-# Settings for Netlify Functions (your Python backend)
 [functions]
-  directory = "backend/app_netlify/"     # Path to your Netlify functions, from the repo root.
+  directory = "backend/app_netlify/"
 
-# Redirects and Rewrites
+[functions."*"] 
+  runtime = "python3.11"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/main/:splat"
@@ -14,8 +15,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html" # Serve index.html from the root of the 'publish' directory
+  to = "/index.html"
   status = 200
-
-[functions."*"] 
-  runtime = "python3.11"
