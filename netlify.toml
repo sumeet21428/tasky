@@ -5,8 +5,7 @@
 [functions]
   directory = "backend/app_netlify/"
 
-[functions."*"] 
-  runtime = "python3.11"
+
 
 [[redirects]]
   from = "/api/*"
