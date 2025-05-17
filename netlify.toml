@@ -1,19 +1,18 @@
 [build]
-  base    = "frontend/"    # Netlify will run build commands from this directory
-  publish = "dist/"
-  command = "npm run build"  # The command to build your frontend
+  command = "cd frontend && npm install && npm run build" # Build frontend: cd into frontend, install, then build
+  publish = "frontend/dist/"              # Path to the built frontend assets, from the repo root.
 
 # Settings for Netlify Functions (your Python backend)
 [functions]
-  directory = "../backend/app_netlify/"
+  directory = "backend/app_netlify/"     # Path to your Netlify functions, from the repo root.
 
-# Redirects and Rewrites (for API proxying and SPA fallback)
+# Redirects and Rewrites
 [[redirects]]
-  from = "/api/*"              # Any request to /api/...
-  to = "/.netlify/functions/main/:splat" # Will be proxied to your Python function named 'main'
-  status = 200                 # Use 200 for proxying (acts like a rewrite)
+  from = "/api/*"
+  to = "/.netlify/functions/main/:splat"
+  status = 200
 
 [[redirects]]
-  from = "/*"                  # For any other path (SPA fallback)
-  to = "/index.html"           # Serve the main index.html
+  from = "/*"
+  to = "/index.html" # Serve index.html from the root of the 'publish' directory
   status = 200
