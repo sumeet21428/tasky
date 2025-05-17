@@ -16,3 +16,6 @@
   from = "/*"
   to = "/index.html" # Serve index.html from the root of the 'publish' directory
   status = 200
+
+[functions."*"] 
+  runtime = "python3.11"
