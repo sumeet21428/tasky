@@ -1,10 +1,12 @@
-import sys
-import os
+import json
 
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
-from app.main import app as fastapi_app 
-from mangum import Mangum
-
-handler = Mangum(fastapi_app, lifespan="auto")
+def handler(event, context):
+    print("Simple test function invoked!")
+    print(f"Event: {event}")
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": json.dumps({"message": "Hello from Netlify Function!"})
+    }
