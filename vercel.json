@@ -4,18 +4,42 @@
     {
       "src": "backend/app/main.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.12" }
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.12" 
+      }
     },
     {
-      "src": "frontend/package.json",
+      "src": "frontend/package.json", 
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": { 
+        "distDir": "dist" 
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
+      "src": "/api/(.*)",                        
       "dest": "/backend/app/main.py"
+    },
+    {
+      "src": "/assets/(.*)",                     
+      "dest": "/frontend/dist/assets/$1"         
+    },
+    {
+      "src": "/vite.svg",                        
+      "dest": "/frontend/dist/vite.svg"
+    },
+    {
+      "src": "/index.html",                      
+      "dest": "/frontend/dist/index.html"
+    },
+    { 
+      "handle": "filesystem"                     
+    },
+    {
+      "src": "/(.*)",                            
+      "dest": "/frontend/dist/index.html"
     }
   ]
 }
