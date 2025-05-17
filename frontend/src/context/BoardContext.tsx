@@ -1,41 +1,31 @@
 // tasky/frontend/src/context/BoardContext.tsx
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+// Removed 'React' default import if only named imports are used from 'react'
+import { createContext, useReducer, useContext, useEffect } from 'react';
 import type { Dispatch, ReactNode } from 'react';
 
 import { TaskStatusValues } from '../types';
 import type { BoardData, Task, TaskStatus, ColumnType } from '../types';
 
-// This defines the structure and initial empty tasks for each column.
-// It's Readonly, so it's a safe template.
-// Using explicit string literal keys that match TaskStatus to satisfy Record<TaskStatus, ColumnType>
 const initialColumnsTemplate: Readonly<Record<TaskStatus, ColumnType>> = {
-  'To Do': { id: TaskStatusValues.TO_DO, title: 'To Do', tasks: [] as Task[] },
-  'In Progress': { id: TaskStatusValues.IN_PROGRESS, title: 'In Progress', tasks: [] as Task[] },
-  Done: { id: TaskStatusValues.DONE, title: 'Done', tasks: [] as Task[] },
+  "To Do":       { id: TaskStatusValues.TO_DO,       title: 'To Do',       tasks: [] as Task[] },
+  "In Progress": { id: TaskStatusValues.IN_PROGRESS, title: 'In Progress', tasks: [] as Task[] },
+  "Done":        { id: TaskStatusValues.DONE,        title: 'Done',        tasks: [] as Task[] },
 };
 
-// Create the initial state for the reducer.
-// We need a mutable copy of the columns structure.
 const createInitialColumns = (): BoardData['columns'] => {
-  // Initialize 'columns' with an assertion to tell TypeScript its eventual, correct shape.
-  // This is helpful as we are building the object property by property.
-  const columns = {} as BoardData['columns'];
-  // Iterate using TaskStatusValues to ensure all defined statuses are included
-  // and to use the canonical string values for keys.
-  Object.values(TaskStatusValues).forEach((status) => {
-    // initialColumnsTemplate[status] is guaranteed to exist because 'status'
-    // comes from TaskStatusValues, and initialColumnsTemplate uses these as keys.
-    columns[status] = {
-      ...initialColumnsTemplate[status], // Spread properties from the template
-      tasks: [...initialColumnsTemplate[status].tasks], // Create a new, distinct tasks array
+  const columns = {} as BoardData['columns']; 
+  (Object.values(TaskStatusValues) as TaskStatus[]).forEach((status) => {
+    columns[status] = { 
+        ...initialColumnsTemplate[status], 
+        tasks: [...initialColumnsTemplate[status].tasks] 
     };
   });
   return columns;
 };
 
 const initialState: BoardData = {
-  columns: createInitialColumns(), // createInitialColumns now returns the correctly typed BoardData['columns']
+  columns: createInitialColumns(),
   columnOrder: [TaskStatusValues.TO_DO, TaskStatusValues.IN_PROGRESS, TaskStatusValues.DONE],
 };
 
@@ -60,10 +50,10 @@ interface DeleteTaskAction {
   };
 }
 interface MoveTaskLocallyAction {
-  type: 'MOVE_TASK_LOCALLY';
-  payload: {
-    newColumns: BoardData['columns'];
-  };
+    type: 'MOVE_TASK_LOCALLY';
+    payload: {
+        newColumns: BoardData['columns'];
+    };
 }
 
 type Action =
@@ -77,22 +67,18 @@ const boardReducer = (state: BoardData, action: Action): BoardData => {
   switch (action.type) {
     case 'SET_BOARD_DATA': {
       const tasks = action.payload;
-      const newColumnsState = createInitialColumns();
+      const newColumnsState = createInitialColumns(); 
 
-      tasks.forEach((task) => {
+      tasks.forEach(task => {
         const statusKey = task.status;
-        // Object.prototype.hasOwnProperty.call is a robust check.
-        // newColumnsState[statusKey].tasks access is safe if the above is true, given ColumnType.
-        if (Object.prototype.hasOwnProperty.call(newColumnsState, statusKey)) {
+        if (Object.prototype.hasOwnProperty.call(newColumnsState, statusKey) && newColumnsState[statusKey].tasks) {
           newColumnsState[statusKey].tasks.push(task);
         } else {
-          console.warn(
-            `Task with id ${task.id} has an unknown or uninitialized status: ${statusKey}. Task not added.`
-          );
+          console.warn(`Task with id ${task.id} has an unknown or uninitialized status: ${statusKey}. Task not added.`);
         }
       });
 
-      Object.values(newColumnsState).forEach((column) => {
+      Object.values(newColumnsState).forEach(column => {
         column.tasks.sort((a, b) => a.order - b.order);
       });
       return { ...state, columns: newColumnsState };
@@ -101,8 +87,8 @@ const boardReducer = (state: BoardData, action: Action): BoardData => {
     case 'ADD_TASK': {
       const newTask = action.payload;
       const targetColumnKey = newTask.status;
-      // state.columns[targetColumnKey] is guaranteed to be ColumnType by BoardData type
-      const targetColumn = state.columns[targetColumnKey];
+      const targetColumn = state.columns[targetColumnKey]; 
+
       const updatedTasks = [...targetColumn.tasks, newTask].sort((a, b) => a.order - b.order);
       return {
         ...state,
@@ -116,11 +102,10 @@ const boardReducer = (state: BoardData, action: Action): BoardData => {
     case 'UPDATE_TASK': {
       const updatedTask = action.payload;
       const columnToUpdateKey = updatedTask.status;
-      // state.columns[columnToUpdateKey] is guaranteed to be ColumnType
-      const columnToUpdate = state.columns[columnToUpdateKey];
-      const updatedTasks = columnToUpdate.tasks
-        .map((task) => (task.id === updatedTask.id ? updatedTask : task))
-        .sort((a, b) => a.order - b.order);
+      const columnToUpdate = state.columns[columnToUpdateKey]; 
+      const updatedTasks = columnToUpdate.tasks.map(task =>
+        task.id === updatedTask.id ? updatedTask : task
+      ).sort((a, b) => a.order - b.order);
       return {
         ...state,
         columns: {
@@ -133,9 +118,8 @@ const boardReducer = (state: BoardData, action: Action): BoardData => {
     case 'DELETE_TASK': {
       const { taskId, status } = action.payload;
       const columnToDeleteFromKey = status;
-      // state.columns[columnToDeleteFromKey] is guaranteed to be ColumnType
-      const columnToDeleteFrom = state.columns[columnToDeleteFromKey];
-      const updatedTasks = columnToDeleteFrom.tasks.filter((task) => task.id !== taskId);
+      const columnToDeleteFrom = state.columns[columnToDeleteFromKey]; 
+      const updatedTasks = columnToDeleteFrom.tasks.filter(task => task.id !== taskId);
       return {
         ...state,
         columns: {
@@ -146,10 +130,10 @@ const boardReducer = (state: BoardData, action: Action): BoardData => {
     }
 
     case 'MOVE_TASK_LOCALLY': {
-      return {
-        ...state,
-        columns: action.payload.newColumns,
-      };
+        return {
+            ...state,
+            columns: action.payload.newColumns,
+        };
     }
     default:
       return state;
@@ -167,7 +151,9 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <BoardStateContext.Provider value={state}>
-      <BoardDispatchContext.Provider value={dispatch}>{children}</BoardDispatchContext.Provider>
+      <BoardDispatchContext.Provider value={dispatch}>
+        {children}
+      </BoardDispatchContext.Provider>
     </BoardStateContext.Provider>
   );
 };
@@ -175,7 +161,6 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
 export const useBoardState = (): BoardData => {
   const context = useContext(BoardStateContext);
   if (context === undefined) {
-    // This check is valid and necessary
     throw new Error('useBoardState must be used within a BoardProvider');
   }
   return context;
@@ -184,7 +169,6 @@ export const useBoardState = (): BoardData => {
 export const useBoardDispatch = (): Dispatch<Action> => {
   const context = useContext(BoardDispatchContext);
   if (context === undefined) {
-    // This check is valid and necessary
     throw new Error('useBoardDispatch must be used within a BoardProvider');
   }
   return context;
