@@ -13,6 +13,7 @@ const initialColumnsTemplate: Readonly<Record<TaskStatus, ColumnType>> = {
 const createInitialColumns = (): BoardData['columns'] => {
   const columns = {} as BoardData['columns']; 
   (Object.values(TaskStatusValues) as TaskStatus[]).forEach((status) => {
+    // initialColumnsTemplate[status] is guaranteed to exist
     columns[status] = { 
         ...initialColumnsTemplate[status], 
         tasks: [...initialColumnsTemplate[status].tasks] 
