@@ -1,6 +1,3 @@
-// tasky/frontend/src/context/BoardContext.tsx
-/* eslint-disable react-refresh/only-export-components */
-// Removed 'React' default import if only named imports are used from 'react'
 import { createContext, useReducer, useContext, useEffect } from 'react';
 import type { Dispatch, ReactNode } from 'react';
 
