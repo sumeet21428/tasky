@@ -1,11 +1,11 @@
 [build]
   base    = "frontend/"    # Netlify will run build commands from this directory
-  publish = "frontend/dist/" # The directory (relative to root) that contains the built frontend assets
+  publish = "dist/"
   command = "npm run build"  # The command to build your frontend
 
 # Settings for Netlify Functions (your Python backend)
 [functions]
-  directory = "backend/app_netlify/" # Directory where your Netlify-compatible Python function will reside
+  directory = "../backend/app_netlify/"
 
 # Redirects and Rewrites (for API proxying and SPA fallback)
 [[redirects]]
