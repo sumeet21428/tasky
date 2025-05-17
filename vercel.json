@@ -10,10 +10,11 @@
       }
     },
     {
+      
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist" 
+        "distDir": "dist"
       }
     }
   ],
@@ -22,14 +23,27 @@
       "src": "/api/(.*)",
       "dest": "/backend/app/main.py"
     },
-
     {
-      "handle": "filesystem"
+      "src": "/assets/(.*)",
+      "dest": "/frontend/dist/assets/$1"
+    },
+    {
+      "src": "/vite.svg", 
+      "dest": "/frontend/dist/vite.svg"
     },
     
     {
+      "src": "/favicon.ico",
+      "dest": "/frontend/dist/favicon.ico"
+    },
+    
+    {
+      "handle": "filesystem"
+    },
+   
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/frontend/dist/index.html"
     }
   ]
 }
