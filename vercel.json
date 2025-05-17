@@ -21,21 +21,7 @@
     {
       "src": "/api/(.*)",
       "dest": "/backend/app/main.py"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1" 
-    },
-    {
-      "src": "/vite.svg",
-      "dest": "/vite.svg"    
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
     }
+   
   ]
 }
